@@ -39,7 +39,7 @@ inter_dim = 128
 mid_dim = (256, 2, 2)
 mid_num = 1
 for i in mid_dim:
-    mid_num *= i
+    mid_num *= i # 256*2*2=1024
 
 
 class ConvVAE(nn.Module):
@@ -47,8 +47,10 @@ class ConvVAE(nn.Module):
         super(ConvVAE, self).__init__()
 
         self.encoder = nn.Sequential(
+
+            # conv2d的四个参数分别为input_channel,output_channel,kernel_size,stride和padding
             nn.Conv2d(3, 32, 3, 2, 1),
-            nn.BatchNorm2d(32),
+            nn.BatchNorm2d(32), # 第一个参数是特征数也就是通道数
             nn.LeakyReLU(.2),
 
             nn.Conv2d(32, 64, 3, 2, 1),
@@ -96,7 +98,8 @@ class ConvVAE(nn.Module):
         )
 
     def reparameterize(self, mu, logvar):
-        epsilon = torch.randn_like(mu)
+        # 进行随机采样
+        epsilon = torch.randn_like(mu) 
         return mu + epsilon * torch.exp(logvar / 2)
 
     def forward(self, x):
@@ -164,9 +167,9 @@ for epoch in range(epochs):
         train_loss += loss.item()
         loss = loss / batch
 
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
+        optimizer.zero_grad() # 清空梯度
+        loss.backward() # 反向传播计算梯度
+        optimizer.step() # 参数step更新
 
         if idx % 100 == 0:
             print(f"Training loss {loss: .3f} \t Recon {recon / batch: .3f} \t KL {kl / batch: .3f} in Step {idx}")
