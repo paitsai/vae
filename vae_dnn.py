@@ -23,13 +23,13 @@ class VAE(nn.Module):
 
         # 第一部分编码器 encoder
         self.encoder = nn.Sequential(
-            nn.linear(input_dim,inter_dim),
+            nn.Linear(input_dim,inter_dim),
             nn.ReLU(),
             nn.Linear(inter_dim, 2*latent_dim)  # 2*latent_dim 因为我们需要返回两个值，一个是均值，一个是方差
         )
 
         self.decoder=nn.Sequential(
-            nn.linear(latent_dim, inter_dim),
+            nn.Linear(latent_dim, inter_dim),
             nn.ReLU(),
             nn.Linear(inter_dim, input_dim),
             nn.Sigmoid()  # 最后一层用Sigmoid函数保证输出在0~1之间
